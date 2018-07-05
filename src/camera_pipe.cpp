@@ -20,6 +20,10 @@ CameraPipe::CameraPipe(NodeHandle &nh, std::string pipe, int cam_num, int width,
 
 }
 
+CameraPipe::~CameraPipe(){
+  delete p_;
+}
+
 //get image from pipe
 bool CameraPipe::getImageFromPipe(){
 

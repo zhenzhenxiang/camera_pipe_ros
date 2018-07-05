@@ -23,6 +23,7 @@ using namespace cv;
 class CameraPipe{
 public:
   CameraPipe(ros::NodeHandle &nh, std::string pipe, int cam_num, int width, int height);
+  ~CameraPipe();
   void run();
 
 private:
