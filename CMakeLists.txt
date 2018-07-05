@@ -154,7 +154,7 @@ include_directories(
 #   ${catkin_LIBRARIES}
 # )
 
-add_executable(camera_pipe_node src/camera_pipe_node.cpp src/imgpipe.cpp)
+add_executable(camera_pipe_node src/camera_pipe_node.cpp src/imgpipe.cpp src/camera_pipe.cpp)
 target_link_libraries(camera_pipe_node ${catkin_LIBRARIES} ${OpenCV_LIBS})
 
 #############
