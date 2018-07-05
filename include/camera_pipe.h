@@ -24,6 +24,10 @@ class CameraPipe{
 public:
   CameraPipe(ros::NodeHandle &nh, std::string pipe, int cam_num, int width, int height);
   ~CameraPipe();
+
+  void setMapPathForSeg(std::string path_XMap, std::string path_YMap);
+  void setMapPathForPark(std::string path_XMap, std::string path_YMap);
+
   void run();
 
 private:
@@ -32,6 +36,9 @@ private:
 
   image_transport::Publisher pub_all_;
   std::vector<image_transport::Publisher> pub_cam_vec_;
+
+  image_transport::Publisher pub_birdview_seg_;
+  image_transport::Publisher pub_birdview_park_;
 
   IMGPipe *p_;
 
@@ -44,8 +51,26 @@ private:
 
   std::vector<string> cam_list_;
 
+  std::string path_XMap_seg_;
+  std::string path_YMap_seg_;
+
+  cv::Mat XMap_seg_;
+  cv::Mat YMap_seg_;
+
+  std::string path_XMap_park_;
+  std::string path_YMap_park_;
+
+  cv::Mat XMap_park_;
+  cv::Mat YMap_park_;
+
+  cv::Mat birdviewImg_seg_;
+  cv::Mat birdviewImg_park_;
+
   bool getImageFromPipe();
   void seperateImages();
+  void initBirdviewMapForSeg();
+  void initBirdviewMapForPark();
+  bool generateBirdviewImage();
   void visualize();
 
 };

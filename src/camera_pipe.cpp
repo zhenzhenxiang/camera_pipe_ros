@@ -14,6 +14,10 @@ CameraPipe::CameraPipe(NodeHandle &nh, std::string pipe, int cam_num, int width,
     pub_cam_vec_[i] = it_.advertise(topic.c_str(), 1);
   }
 
+  pub_birdview_seg_ = it_.advertise("camera/image/birdview_seg", 1); //birdview images for segmentation
+
+  pub_birdview_park_ = it_.advertise("camera/image/birdview_park", 1); //birdview images for parking lot detection
+
   img_vec_.resize(cam_num_);
 
   p_ = new IMGPipe(pipe.c_str(), cam_num_*width_, height_);
@@ -41,6 +45,59 @@ void CameraPipe::seperateImages(){
 
 }
 
+//set the path of birdview map for segmentation
+void CameraPipe::setMapPathForSeg(std::string path_XMap, std::string path_YMap){
+  path_XMap_seg_ = path_XMap;
+  path_YMap_seg_ = path_YMap;
+
+  initBirdviewMapForSeg();
+}
+
+//set the path of birdview map for parking lot detection
+void CameraPipe::setMapPathForPark(std::string path_XMap, std::string path_YMap){
+  path_XMap_park_ = path_XMap;
+  path_YMap_park_ = path_YMap;
+
+  initBirdviewMapForPark();
+}
+
+// initialize the birdview map for segmentation
+void CameraPipe::initBirdviewMapForSeg(){
+
+  cv::FileStorage fs;
+  fs = cv::FileStorage(path_XMap_seg_, cv::FileStorage::READ);
+  fs["XMap"] >> XMap_seg_;
+  fs.release();
+  fs = cv::FileStorage(path_YMap_seg_, cv::FileStorage::READ);
+  fs["YMap"] >> YMap_seg_;
+  fs.release();
+  cv::convertMaps(XMap_seg_, YMap_seg_, XMap_seg_, YMap_seg_, CV_16SC2);
+}
+
+// initialize the birdview map for parking
+void CameraPipe::initBirdviewMapForPark(){
+
+  cv::FileStorage fs;
+  fs = cv::FileStorage(path_XMap_park_, cv::FileStorage::READ);
+  fs["XMap"] >> XMap_park_;
+  fs.release();
+  fs = cv::FileStorage(path_YMap_park_, cv::FileStorage::READ);
+  fs["YMap"] >> YMap_park_;
+  fs.release();
+  cv::convertMaps(XMap_park_, YMap_park_, XMap_park_, YMap_park_, CV_16SC2);
+}
+
+// generate the birdview image for segmentation and parking
+bool CameraPipe::generateBirdviewImage(){
+
+  cv::Mat concatResult;
+  cv::vconcat(img_vec_, cam_num_, concatResult);
+  cv::remap(concatResult, birdviewImg_seg_, XMap_seg_, YMap_seg_, CV_INTER_LINEAR);
+  cv::remap(concatResult, birdviewImg_park_, XMap_seg_, YMap_seg_, CV_INTER_LINEAR);
+
+}
+
+
 //run the publishing process
 void CameraPipe::run(){
 
@@ -62,6 +119,14 @@ void CameraPipe::run(){
       pub.publish(msg);
     }
 
+    generateBirdviewImage();
+
+    sensor_msgs::ImagePtr msg_birdview_seg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", birdviewImg_seg_).toImageMsg();
+    pub_birdview_seg_.publish(msg_birdview_seg);
+
+    sensor_msgs::ImagePtr msg_birdview_park = cv_bridge::CvImage(std_msgs::Header(), "bgr8", birdviewImg_park_).toImageMsg();
+    pub_birdview_park_.publish(msg_birdview_park);
+
     visualize();
 
     ros::Duration(0.03).sleep();
@@ -78,6 +143,9 @@ void CameraPipe::visualize(){
     std::string cam_name = cam_list_[i];
     cv::imshow(cam_name, img_vec_[i]);
   }
+
+  cv::imshow("birdviewImg_seg", birdviewImg_seg_);
+  cv::imshow("birdviewImg_park_", birdviewImg_park_);
 
   cv::waitKey(1);
 
