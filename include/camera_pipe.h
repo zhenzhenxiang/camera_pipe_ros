@@ -25,8 +25,8 @@ public:
   CameraPipe(ros::NodeHandle &nh, std::string pipe, int cam_num, int width, int height);
   ~CameraPipe();
 
-  void setMapPathForSeg(std::string path_XMap, std::string path_YMap);
-  void setMapPathForPark(std::string path_XMap, std::string path_YMap);
+  bool setMapPathForSeg(std::string path_XMap, std::string path_YMap);
+  bool setMapPathForPark(std::string path_XMap, std::string path_YMap);
 
   void run();
 
@@ -68,8 +68,8 @@ private:
 
   bool getImageFromPipe();
   void seperateImages();
-  void initBirdviewMapForSeg();
-  void initBirdviewMapForPark();
+  bool initBirdviewMapForSeg();
+  bool initBirdviewMapForPark();
   bool generateBirdviewImage();
   void visualize();
 

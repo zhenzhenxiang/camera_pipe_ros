@@ -29,11 +29,15 @@ int main(int argc, char** argv){
   std::string path_birdview_YMap_park = pnh.param("birdview_YMap_path_park", std::string("YMap_park.yaml"));
 
   CameraPipe cp(nh, path_IMGPipe, cam_num, image_width, image_height);
-  cp.setMapPathForSeg(path_birdview_XMap_seg, path_birdview_YMap_seg);
-  cp.setMapPathForPark(path_birdview_XMap_park, path_birdview_YMap_park);
 
-  cp.run();
-  
+  if(cp.setMapPathForSeg(path_birdview_XMap_seg, path_birdview_YMap_seg) &&
+  	cp.setMapPathForPark(path_birdview_XMap_park, path_birdview_YMap_park)){
+
+      ROS_INFO("Start processing and republishing camera images...");
+      cp.run();
+
+  	}
+
   return 0;
 }
 
