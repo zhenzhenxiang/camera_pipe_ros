@@ -55,9 +55,8 @@ bool CameraPipe::setMapPathForSeg(std::string path_XMap, std::string path_YMap){
 }
 
 //set the path of birdview map for parking lot detection
-bool CameraPipe::setMapPathForPark(std::string path_XMap, std::string path_YMap){
-  path_XMap_park_ = path_XMap;
-  path_YMap_park_ = path_YMap;
+bool CameraPipe::setMapPathForPark(std::string path_XYMap){
+  path_XYMap_park_ = path_XYMap;
 
   return initBirdviewMapForPark();
 }
@@ -90,11 +89,8 @@ bool CameraPipe::initBirdviewMapForPark(){
 
   cv::Mat tmp_XMap, tmp_YMap;
   
-  cv::FileStorage fs;
-  fs = cv::FileStorage(path_XMap_park_, cv::FileStorage::READ);
+  cv::FileStorage fs(path_XYMap_park_, cv::FileStorage::READ);
   fs["XMap"] >> tmp_XMap;
-  fs.release();
-  fs = cv::FileStorage(path_YMap_park_, cv::FileStorage::READ);
   fs["YMap"] >> tmp_YMap;
   fs.release();
   

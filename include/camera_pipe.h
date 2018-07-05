@@ -26,7 +26,7 @@ public:
   ~CameraPipe();
 
   bool setMapPathForSeg(std::string path_XMap, std::string path_YMap);
-  bool setMapPathForPark(std::string path_XMap, std::string path_YMap);
+  bool setMapPathForPark(std::string path_XYMap);
 
   void run();
 
@@ -57,8 +57,7 @@ private:
   cv::Mat XMap_seg_;
   cv::Mat YMap_seg_;
 
-  std::string path_XMap_park_;
-  std::string path_YMap_park_;
+  std::string path_XYMap_park_;
 
   cv::Mat XMap_park_;
   cv::Mat YMap_park_;

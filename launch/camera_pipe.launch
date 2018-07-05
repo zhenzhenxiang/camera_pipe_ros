@@ -7,8 +7,7 @@
       <param name="image_height" value="960" />
       <param name="birdview_XMap_path_seg" value="$(find camera_pipe_ros)/map/XMap_seg.yaml" />
       <param name="birdview_YMap_path_seg" value="$(find camera_pipe_ros)/map/YMap_seg.yaml" />
-      <param name="birdview_XMap_path_park" value="$(find camera_pipe_ros)/map/XMap_park.yaml" />
-      <param name="birdview_YMap_path_park" value="$(find camera_pipe_ros)/map/YMap_park.yaml" />
+      <param name="birdview_XYMap_path_park" value="$(find camera_pipe_ros)/map/XYMap_park.yaml" />
   </node>
 
 </launch>
