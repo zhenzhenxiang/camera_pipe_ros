@@ -1,0 +1,10 @@
+<launch>
+
+  <node pkg="camera_pipe_ros" type="camera_pipe_node" name="camera_pipe_node" output="screen" respawn="true">
+      <param name="camera_pipe_path" value="/tmp/_ap0102_pixel" />
+      <param name="cam_num" value="4" />
+      <param name="image_width" value="1280" />
+      <param name="image_height" value="960" />
+  </node>
+
+</launch>
