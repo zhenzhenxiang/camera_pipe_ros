@@ -16,7 +16,7 @@ int main(int argc, char** argv){
   ros::init(argc, argv, "camera_pipe_node");
   ros::NodeHandle nh;
 
-  std::string path_IMGPipe = nh.param("camera_pipe/pipe_path", std::string("/tmp/_ap0102_pixel"));
+  std::string path_IMGPipe = nh.param("camera_pipe_path", std::string("/tmp/_ap0102_pixel"));
   int cam_num = nh.param("cam_num", 4);
   int image_width = nh.param("image_width", 1280);
   int image_height = nh.param("image_height", 960);
