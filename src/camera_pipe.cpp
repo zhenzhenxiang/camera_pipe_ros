@@ -61,7 +61,7 @@ bool CameraPipe::setMapPathForPark(std::string path_XYMap){
   return initBirdviewMapForPark();
 }
 
-// initialize the birdview map for segmentation
+//initialize the birdview map for segmentation
 bool CameraPipe::initBirdviewMapForSeg(){
 
   cv::Mat tmp_XMap, tmp_YMap;
@@ -84,7 +84,7 @@ bool CameraPipe::initBirdviewMapForSeg(){
 
 }
 
-// initialize the birdview map for parking
+//initialize the birdview map for parking
 bool CameraPipe::initBirdviewMapForPark(){
 
   cv::Mat tmp_XMap, tmp_YMap;
@@ -103,7 +103,7 @@ bool CameraPipe::initBirdviewMapForPark(){
   return true;
 }
 
-// generate the birdview image for segmentation and parking
+//generate the birdview image for segmentation and parking
 bool CameraPipe::generateBirdviewImage(){
   
   cv::Mat concatResult;
@@ -115,6 +115,43 @@ bool CameraPipe::generateBirdviewImage(){
 
 }
 
+//undistort the image of front camera
+bool CameraPipe::undistortFrontImage(){
+
+  //distort matrix
+  const cv::Mat camera_distortMatrix = (cv::Mat_<double>(1,4) << 0.0803433, 0.0494984, -0.0386655, 0.00642292);
+  //camera intrinsic matrix
+  const cv::Mat camera_kMatrix = (cv::Mat_<double>(3,3) <<  314.7547755462885, 0, 644.5649061478241,
+                                                             0, 326.9831749345991, 519.4605613151753,
+                                                             0, 0, 1);
+  cv::Size image_size(width_, height_);
+  cv::Mat map_x = Mat(image_size, CV_32FC1);
+  cv::Mat map_y = Mat(image_size, CV_32FC1);
+  cv::Mat R = Mat::eye(3,3,CV_32F);
+  cv::fisheye::initUndistortRectifyMap(camera_kMatrix, camera_distortMatrix, R,
+                                       getOptimalNewCameraMatrix(camera_kMatrix, camera_distortMatrix,
+                                                                 image_size, 1, image_size, 0),
+                                       image_size, CV_32FC1, map_x, map_y);
+
+  //get front camera index and undistort the image
+  auto front_cam_it = std::find(cam_list_.begin(), cam_list_.end(), "front");
+  if(front_cam_it != cam_list_.end()){
+    size_t cam_index = front_cam_it - cam_list_.begin();
+
+    cv::remap(img_vec_[cam_index], undistortedFrontImg_, map_x, map_y, INTER_LINEAR);
+    if(!undistortedFrontImg_.empty())
+      return true;
+    else{
+      ROS_ERROR("Failed to undistor front camera image. Exit!");
+      return false;
+    }
+  }
+  else{
+    ROS_ERROR("Front camera is not defined. Failed to undistort front camera image. Exit.");
+    return false;
+  }
+
+}
 
 //run the publishing process
 void CameraPipe::run(){
@@ -140,13 +177,20 @@ void CameraPipe::run(){
     if(!generateBirdviewImage()){
       ROS_ERROR("Failed to generate birdview image! Exit.");
       return;
-    };
+    }
 
     sensor_msgs::ImagePtr msg_birdview_seg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", birdviewImg_seg_).toImageMsg();
     pub_birdview_seg_.publish(msg_birdview_seg);
 
     sensor_msgs::ImagePtr msg_birdview_park = cv_bridge::CvImage(std_msgs::Header(), "bgr8", birdviewImg_park_).toImageMsg();
     pub_birdview_park_.publish(msg_birdview_park);
+
+    if(!undistortFrontImage()){
+      return;
+    }
+
+    sensor_msgs::ImagePtr msg_front_undistorted = cv_bridge::CvImage(std_msgs::Header(), "bgr8", undistortedFrontImg_).toImageMsg();
+    pub_front_undistored_.publish(msg_front_undistorted);
 
     visualize();
 
@@ -166,7 +210,9 @@ void CameraPipe::visualize(){
   }
 
   cv::imshow("birdviewImg_seg", birdviewImg_seg_);
-  cv::imshow("birdviewImg_park_", birdviewImg_park_);
+  cv::imshow("birdviewImg_park", birdviewImg_park_);
+
+  cv::imshow("undistortedFrontImg", undistortedFrontImg_);
 
   cv::waitKey(1);
 

@@ -3,7 +3,7 @@
 
 //system
 #include <ctime>
-
+#include <algorithm>
 //opencv
 #include <opencv2/opencv.hpp>
 
@@ -40,6 +40,8 @@ private:
   image_transport::Publisher pub_birdview_seg_;
   image_transport::Publisher pub_birdview_park_;
 
+  image_transport::Publisher pub_front_undistored_;
+
   IMGPipe *p_;
 
   cv::Mat img_all_;
@@ -65,11 +67,14 @@ private:
   cv::Mat birdviewImg_seg_;
   cv::Mat birdviewImg_park_;
 
+  cv::Mat undistortedFrontImg_;
+
   bool getImageFromPipe();
   void seperateImages();
   bool initBirdviewMapForSeg();
   bool initBirdviewMapForPark();
   bool generateBirdviewImage();
+  bool undistortFrontImage();
   void visualize();
 
 };
