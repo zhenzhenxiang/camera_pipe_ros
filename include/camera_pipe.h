@@ -11,6 +11,8 @@
 #include <ros/ros.h>
 #include <image_transport/image_transport.h>
 #include <cv_bridge/cv_bridge.h>
+#include <sensor_msgs/CameraInfo.h>
+#include <camera_info_manager/camera_info_manager.h>
 
 //user
 #include "KeyControl.hpp"
@@ -27,6 +29,7 @@ public:
 
   bool setMapPathForSeg(std::string path_XMap, std::string path_YMap);
   bool setMapPathForPark(std::string path_XYMap);
+  bool loadCameraInfo(std::string path_cam_info, std::string cam_name);
 
   void run();
 
@@ -67,7 +70,12 @@ private:
   cv::Mat birdviewImg_seg_;
   cv::Mat birdviewImg_park_;
 
+  cv::Mat XMap_front_;
+  cv::Mat YMap_front_;
   cv::Mat undistortedFrontImg_;
+
+  sensor_msgs::CameraInfo info_;
+  camera_info_manager::CameraInfoManager info_manager_;
 
   bool getImageFromPipe();
   void seperateImages();

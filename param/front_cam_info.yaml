@@ -1,0 +1,20 @@
+image_width: 1280
+image_height: 960
+camera_name: front
+camera_matrix:
+  rows: 3
+  cols: 3
+  data: [314.75, 0, 644.56, 0, 326.98, 519.46, 0, 0, 1]
+distortion_model: plumb_bob # actually using the opencv fisheye model
+distortion_coefficients:
+  rows: 1
+  cols: 4
+  data: [0.0803433, 0.0494984, -0.0386655, 0.00642292]
+rectification_matrix:
+  rows: 3
+  cols: 3
+  data: [1, 0, 0, 0, 1, 0, 0, 0, 1]
+projection_matrix:
+  rows: 3
+  cols: 4
+  data: [314.75, 0, 644.56, 0, 0, 326.98, 519.46, 0, 0, 0, 1, 0]
