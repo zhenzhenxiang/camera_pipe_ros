@@ -33,7 +33,7 @@ int main(int argc, char** argv)
       pnh.param("birdview_XYMap_path_park", std::string("XYMap_park.yaml"));
 
   std::string path_cam_info_front =
-      pnh.param("front_cam_info_path", std::string("front_cam_info.yaml"));
+      pnh.param("front_cam_info_path", std::string("front_cam.yaml"));
 
   CameraPipe cp(nh, path_IMGPipe, cam_num, image_width, image_height);
 

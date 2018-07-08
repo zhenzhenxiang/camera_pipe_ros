@@ -8,7 +8,7 @@
       <param name="birdview_XMap_path_seg" value="$(find camera_pipe_ros)/param/XMap_seg.yaml" />
       <param name="birdview_YMap_path_seg" value="$(find camera_pipe_ros)/param/YMap_seg.yaml" />
       <param name="birdview_XYMap_path_park" value="$(find camera_pipe_ros)/param/XYMap_park.yaml" />
-      <param name="front_cam_info_path" value="$(find camera_pipe_ros)/param/front_cam_info.yaml" />
+      <param name="front_cam_info_path" value="file://$(find camera_pipe_ros)/param/front_cam.yaml" />
   </node>
 
 </launch>

@@ -118,40 +118,49 @@ bool CameraPipe::generateBirdviewImage(){
 //load camera info from yaml file
 bool CameraPipe::loadCameraInfo(std::string path_cam_info, std::string cam_name){
 
+  bool success = false;
   info_manager_.setCameraName(cam_name);
 
   if (info_manager_.validateURL(path_cam_info)){
 
-    info_manager_.loadCameraInfo(path_cam_info);
-    info_ = info_manager_.getCameraInfo();
+    if(info_manager_.loadCameraInfo(path_cam_info)){
+      info_ = info_manager_.getCameraInfo();
 
-    //camera intrinsic matrix
-    const cv::Mat K(3,3,CV_32FC1,&info_.K.front());
-    /*
-    const cv::Mat camera_kMatrix = (cv::Mat_<double>(3,3) <<  314.7547755462885, 0, 644.5649061478241,
-                                                               0, 326.9831749345991, 519.4605613151753,
-                                                               0, 0, 1);
-    */
+      //camera intrinsic matrix
+      const cv::Mat K(3,3,CV_32FC1,&info_.K.front());
+      /*
+      const cv::Mat camera_kMatrix = (cv::Mat_<double>(3,3) <<  314.7547755462885, 0, 644.5649061478241,
+                                                                 0, 326.9831749345991, 519.4605613151753,
+                                                                 0, 0, 1);
+      */
 
-    //distort matrix
-    const cv::Mat D(1,4,CV_32FC1,&info_.D.front());
-    //const cv::Mat camera_distortMatrix = (cv::Mat_<double>(1,4) << 0.0803433, 0.0494984, -0.0386655, 0.00642292);
+      //distort matrix
+      const cv::Mat D(1,4,CV_32FC1,&info_.D.front());
+      //const cv::Mat camera_distortMatrix = (cv::Mat_<double>(1,4) << 0.0803433, 0.0494984, -0.0386655, 0.00642292);
 
-    cv::Size image_size(width_, height_);
-    XMap_front_ = Mat(image_size, CV_32FC1);
-    YMap_front_ = Mat(image_size, CV_32FC1);
-    cv::Mat R = Mat::eye(3,3,CV_32F);
-    cv::fisheye::initUndistortRectifyMap(K, D, R,
-                                         getOptimalNewCameraMatrix(K, D,
-                                                                   image_size, 1, image_size, 0),
-                                         image_size, CV_32FC1, XMap_front_, YMap_front_);
+      cv::Size image_size(width_, height_);
+      XMap_front_ = Mat(image_size, CV_32FC1);
+      YMap_front_ = Mat(image_size, CV_32FC1);
+      cv::Mat R = Mat::eye(3,3,CV_32F);
+      cv::fisheye::initUndistortRectifyMap(K, D, R,
+                                           getOptimalNewCameraMatrix(K, D,
+                                                                     image_size, 1, image_size, 0),
+                                           image_size, CV_32FC1, XMap_front_, YMap_front_);
+      success = true;
+    }
+    else{
+      ROS_ERROR("Failed to load camera info, file does not exist: %s", path_cam_info.c_str());
+      success = false;
+    }
 
-    return true;
   }
   else{
-    ROS_ERROR("Failed to load camera info from path: %s", path_cam_info.c_str());
-    return false;
+    ROS_ERROR("Failed to resolve the path: %s", path_cam_info.c_str());
+    success = false;
   }
+
+  return success;
+
 }
 
 //undistort the image of front camera
