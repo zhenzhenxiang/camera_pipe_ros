@@ -127,7 +127,7 @@ bool CameraPipe::loadCameraInfo(std::string path_cam_info, std::string cam_name)
       info_ = info_manager_.getCameraInfo();
 
       //camera intrinsic matrix
-      const cv::Mat K(3,3,CV_32FC1,&info_.K.front());
+      const cv::Mat K(3,3,CV_64F,&info_.K.front());
       /*
       const cv::Mat camera_kMatrix = (cv::Mat_<double>(3,3) <<  314.7547755462885, 0, 644.5649061478241,
                                                                  0, 326.9831749345991, 519.4605613151753,
@@ -135,7 +135,7 @@ bool CameraPipe::loadCameraInfo(std::string path_cam_info, std::string cam_name)
       */
 
       //distort matrix
-      const cv::Mat D(1,4,CV_32FC1,&info_.D.front());
+      const cv::Mat D(1,4,CV_64F,&info_.D.front());
       //const cv::Mat camera_distortMatrix = (cv::Mat_<double>(1,4) << 0.0803433, 0.0494984, -0.0386655, 0.00642292);
 
       cv::Size image_size(width_, height_);
