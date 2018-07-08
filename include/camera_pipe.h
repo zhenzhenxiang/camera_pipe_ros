@@ -15,7 +15,6 @@
 #include <camera_info_manager/camera_info_manager.h>
 
 //user
-#include "KeyControl.hpp"
 #include "imgpipe.hpp"
 
 using namespace std;
