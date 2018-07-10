@@ -18,6 +18,8 @@ CameraPipe::CameraPipe(NodeHandle &nh, std::string pipe, int cam_num, int width,
 
   pub_birdview_park_ = it_.advertise("camera/image/birdview_park", 1); //birdview images for parking lot detection
 
+  pub_front_undistored_ = it_.advertise("camera/image/front_ssd", 1); //undistorted front cam image for ssd
+
   img_vec_.resize(cam_num_);
 
   p_ = new IMGPipe(pipe.c_str(), cam_num_*width_, height_);
