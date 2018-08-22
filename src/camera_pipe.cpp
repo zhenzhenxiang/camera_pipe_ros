@@ -6,7 +6,7 @@ CameraPipe::CameraPipe(NodeHandle &nh, std::string pipe, int cam_num, int width,
 
   pub_all_ = it_.advertise("camera/image/all", 1); //all four images
 
-  cam_list_ = {"front", "rear", "left", "right"}; // cam 0,1,2,3
+  cam_list_ = {"left", "right", "front", "rear"}; // cam 0,1,2,3
 
   pub_cam_vec_.resize(cam_num_);
   for(int i = 0; i < cam_num_; i++){
