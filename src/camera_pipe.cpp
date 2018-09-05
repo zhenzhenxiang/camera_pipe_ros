@@ -200,11 +200,13 @@ void CameraPipe::run(){
 
     seperateImages();
 
-    sensor_msgs::ImagePtr msg_all = cv_bridge::CvImage(std_msgs::Header(), "bgr8", img_all_).toImageMsg();
+    std_msgs::Header header;
+    header.stamp = ros::Time::now();
+    sensor_msgs::ImagePtr msg_all = cv_bridge::CvImage(header, "bgr8", img_all_).toImageMsg();
     pub_all_.publish(msg_all);
 
     for(int i = 0; i < cam_num_; i++){
-      sensor_msgs::ImagePtr msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", img_vec_[i]).toImageMsg();
+      sensor_msgs::ImagePtr msg = cv_bridge::CvImage(header, "bgr8", img_vec_[i]).toImageMsg();
       image_transport::Publisher pub = pub_cam_vec_[i];
       pub.publish(msg);
     }
@@ -214,17 +216,17 @@ void CameraPipe::run(){
       return;
     }
 
-    sensor_msgs::ImagePtr msg_birdview_seg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", birdviewImg_seg_).toImageMsg();
+    sensor_msgs::ImagePtr msg_birdview_seg = cv_bridge::CvImage(header, "bgr8", birdviewImg_seg_).toImageMsg();
     pub_birdview_seg_.publish(msg_birdview_seg);
 
-    sensor_msgs::ImagePtr msg_birdview_park = cv_bridge::CvImage(std_msgs::Header(), "bgr8", birdviewImg_park_).toImageMsg();
+    sensor_msgs::ImagePtr msg_birdview_park = cv_bridge::CvImage(header, "bgr8", birdviewImg_park_).toImageMsg();
     pub_birdview_park_.publish(msg_birdview_park);
 
     if(!undistortFrontImage()){
       return;
     }
 
-    sensor_msgs::ImagePtr msg_front_undistorted = cv_bridge::CvImage(std_msgs::Header(), "bgr8", undistortedFrontImg_).toImageMsg();
+    sensor_msgs::ImagePtr msg_front_undistorted = cv_bridge::CvImage(header, "bgr8", undistortedFrontImg_).toImageMsg();
     pub_front_undistored_.publish(msg_front_undistorted);
 
     visualize();
